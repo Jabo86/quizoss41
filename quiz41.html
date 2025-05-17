@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 9</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 9</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (241-270) con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "Cos’è il vomito?",
+                options: ["Un accumulo di liquido nei tessuti", "L’espulsione forzata di contenuto gastrico", "Una difficoltà respiratoria"],
+                correct: "L’espulsione forzata di contenuto gastrico",
+                explanation: "Il vomito è l’espulsione forzata del contenuto gastrico attraverso la bocca, spesso causata da infezioni, intossicazioni o ostruzioni. Non è un accumulo di liquido (edema) né una difficoltà respiratoria (dispnea). Gli OSS devono monitorare il vomito, garantire idratazione, fornire assistenza igienica e segnalare episodi persistenti."
+            },
+            {
+                question: "Quale è la complicanza principale del vomito prolungato?",
+                options: ["Ipertensione", "Disidratazione", "Edema"],
+                correct: "Disidratazione",
+                explanation: "La disidratazione è la complicanza principale del vomito prolungato, dovuta alla perdita di liquidi ed elettroliti. Non è l’ipertensione né l’edema. Gli OSS devono somministrare liquidi sotto supervisione medica, monitorare i segni di disidratazione (es. mucose secche) e segnalare il problema."
+            },
+            {
+                question: "Cos’è la nausea?",
+                options: ["Una colorazione bluastra della pelle", "Una sensazione di malessere con urge di vomitare", "Un aumento della frequenza respiratoria"],
+                correct: "Una sensazione di malessere con urge di vomitare",
+                explanation: "La nausea è una sensazione di malessere allo stomaco con il desiderio di vomitare, spesso causata da farmaci, infezioni o gravidanza. Non è una colorazione bluastra (cianosi) né un aumento della frequenza respiratoria (tachipnea). Gli OSS devono garantire comfort, somministrare farmaci antiemetici se prescritti e segnalare la nausea persistente."
+            },
+            {
+                question: "Cos’è l’ostruzione intestinale?",
+                options: ["Un’infiammazione dello stomaco", "Un blocco del passaggio delle feci nell’intestino", "Un accumulo di urina nella vescica"],
+                correct: "Un blocco del passaggio delle feci nell’intestino",
+                explanation: "L’ostruzione intestinale è un blocco parziale o completo del passaggio delle feci o gas nell’intestino, causato da aderenze, tumori o volvolo. Non è un’infiammazione dello stomaco né un accumulo di urina. Gli OSS devono monitorare sintomi come dolore addominale e assenza di evacuazione, segnalandoli immediatamente."
+            },
+            {
+                question: "Quale è un segno tipico dell’ostruzione intestinale?",
+                options: ["Iperglicemia", "Dolore addominale e assenza di feci", "Ipotensione"],
+                correct: "Dolore addominale e assenza di feci",
+                explanation: "Il dolore addominale e l’assenza di evacuazione (o gas) sono segni tipici dell’ostruzione intestinale, accompagnati spesso da nausea e vomito. L’iperglicemia e l’ipotensione non sono direttamente correlate. Gli OSS devono osservare questi sintomi, misurare i parametri vitali e segnalare l’ostruzione."
+            },
+            {
+                question: "Cos’è la gastrite?",
+                options: ["Un’infiammazione della mucosa gastrica", "Un blocco intestinale", "Un’infezione renale"],
+                correct: "Un’infiammazione della mucosa gastrica",
+                explanation: "La gastrite è un’infiammazione della mucosa gastrica, spesso causata da Helicobacter pylori, farmaci o alcol, con sintomi come dolore epigastrico e nausea. Non è un blocco intestinale né un’infezione renale. Gli OSS devono monitorare i sintomi, garantire una dieta leggera se prescritta e segnalare peggioramenti."
+            },
+            {
+                question: "Cos’è un’ulcera gastrica?",
+                options: ["Un’infiammazione del colon", "Una lesione della mucosa gastrica", "Un accumulo di liquido nei polmoni"],
+                correct: "Una lesione della mucosa gastrica",
+                explanation: "Un’ulcera gastrica è una lesione erosiva della mucosa dello stomaco, spesso causata da Helicobacter pylori o farmaci antinfiammatori, con sintomi come dolore bruciante. Non è un’infiammazione del colon né un edema polmonare. Gli OSS devono monitorare il dolore e segnalare segni di complicanze, come sanguinamento."
+            },
+            {
+                question: "Quale è una complicanza grave dell’ulcera gastrica?",
+                options: ["Ipotermia", "Perforazione", "Tachipnea"],
+                correct: "Perforazione",
+                explanation: "La perforazione, ovvero la rottura della parete gastrica, è una complicanza grave dell’ulcera gastrica, che può causare peritonite. Non è l’ipotermia né la tachipnea. Gli OSS devono segnalare immediatamente sintomi come dolore addominale acuto e febbre, garantendo un intervento rapido."
+            },
+            {
+                question: "Cos’è la pancreatite?",
+                options: ["Un’infiammazione del pancreas", "Un’infiammazione del fegato", "Un blocco intestinale"],
+                correct: "Un’infiammazione del pancreas",
+                explanation: "La pancreatite è un’infiammazione del pancreas, spesso causata da calcoli biliari o alcol, con sintomi come dolore addominale severo e nausea. Non è un’infiammazione del fegato (epatite) né un blocco intestinale. Gli OSS devono monitorare i sintomi, garantire il digiuno se prescritto e segnalare peggioramenti."
+            },
+            {
+                question: "Cos’è l’epatite?",
+                options: ["Un’infiammazione del fegato", "Un’infiammazione del pancreas", "Un accumulo di urina"],
+                correct: "Un’infiammazione del fegato",
+                explanation: "L’epatite è un’infiammazione del fegato, spesso causata da virus (es. epatite A, B, C), alcol o tossine, con sintomi come ittero e stanchezza. Non è un’infiammazione del pancreas né un accumulo di urina. Gli OSS devono monitorare i segni di ittero, garantire igiene e segnalare complicanze."
+            },
+            {
+                question: "Quale è un segno tipico dell’epatite?",
+                options: ["Cianosi", "Ittero", "Poliuria"],
+                correct: "Ittero",
+                explanation: "L’ittero, ovvero la colorazione giallastra di pelle e sclere, è un segno tipico dell’epatite, dovuto all’accumulo di bilirubina. La cianosi e la poliuria non sono correlate. Gli OSS devono osservare l’ittero, monitorare i parametri vitali e segnalarlo, garantendo il comfort del paziente."
+            },
+            {
+                question: "Cos’è la cirrosi epatica?",
+                options: ["Un’infiammazione del pancreas", "Una cicatrizzazione progressiva del fegato", "Un blocco intestinale"],
+                correct: "Una cicatrizzazione progressiva del fegato",
+                explanation: "La cirrosi epatica è una cicatrizzazione progressiva del fegato, causata da epatite cronica, alcol o steatosi, che porta a insufficienza epatica. Non è un’infiammazione del pancreas né un blocco intestinale. Gli OSS devono monitorare segni come ascite o edema, garantire una dieta appropriata e segnalare complicanze."
+            },
+            {
+                question: "Quale è una complicanza comune della cirrosi epatica?",
+                options: ["Ascite", "Tachipnea", "Iperglicemia"],
+                correct: "Ascite",
+                explanation: "L’ascite, ovvero l’accumulo di liquido nella cavità addominale, è una complicanza comune della cirrosi epatica, dovuta a ipertensione portale e ipoalbuminemia. La tachipnea e l’iperglicemia non sono tipiche. Gli OSS devono misurare la circonferenza addominale, monitorare il peso e segnalare l’ascite."
+            },
+            {
+                question: "Cos’è la colecistite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione della cistifellea", "Un’infiammazione del colon"],
+                correct: "Un’infiammazione della cistifellea",
+                explanation: "La colecistite è un’infiammazione della cistifellea, spesso causata da calcoli biliari che ostruiscono il dotto cistico, con sintomi come dolore in ipocondrio destro. Non è un’infiammazione della vescica né del colon. Gli OSS devono monitorare il dolore, garantire il digiuno se prescritto e segnalare febbre o ittero."
+            },
+            {
+                question: "Cos’è un calcolo biliare?",
+                options: ["Un accumulo di liquido nei polmoni", "Un deposito solido nella cistifellea", "Un’infiammazione del fegato"],
+                correct: "Un deposito solido nella cistifellea",
+                explanation: "Un calcolo biliare è un deposito solido di colesterolo o bilirubina nella cistifellea, che può causare colecistite o ostruzioni. Non è un accumulo di liquido nei polmoni né un’infiammazione del fegato. Gli OSS devono monitorare sintomi come dolore addominale e nausea, segnalandoli per una valutazione medica."
+            },
+            {
+                question: "Cos’è l’appendicite?",
+                options: ["Un’infiammazione dell’appendice", "Un’infiammazione dello stomaco", "Un blocco renale"],
+                correct: "Un’infiammazione dell’appendice",
+                explanation: "L’appendicite è un’infiammazione dell’appendice, spesso causata da un’ostruzione, con sintomi come dolore in fossa iliaca destra e febbre. Non è un’infiammazione dello stomaco né un blocco renale. Gli OSS devono segnalare immediatamente sintomi come dolore acuto e febbre, garantendo un intervento rapido."
+            },
+            {
+                question: "Quale è un segno tipico dell’appendicite?",
+                options: ["Ittero", "Dolore in fossa iliaca destra", "Poliuria"],
+                correct: "Dolore in fossa iliaca destra",
+                explanation: "Il dolore in fossa iliaca destra, spesso associato a febbre e nausea, è un segno tipico dell’appendicite. L’ittero e la poliuria non sono correlati. Gli OSS devono monitorare il dolore, misurare la temperatura e segnalare sintomi sospetti per evitare complicanze come la perforazione."
+            },
+            {
+                question: "Cos’è la colite?",
+                options: ["Un’infiammazione del colon", "Un’infiammazione della vescica", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione del colon",
+                explanation: "La colite è un’infiammazione del colon, causata da infezioni, malattie infiammatorie (es. colite ulcerosa) o ischemia, con sintomi come diarrea e dolore addominale. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono monitorare la diarrea, garantire idratazione e segnalare sintomi gravi."
+            },
+            {
+                question: "Cos’è il morbo di Crohn?",
+                options: ["Un’infiammazione cronica dell’intestino", "Un’infiammazione del fegato", "Un blocco renale"],
+                correct: "Un’infiammazione cronica dell’intestino",
+                explanation: "Il morbo di Crohn è una malattia infiammatoria cronica dell’intestino, che può colpire qualsiasi tratto del tubo digerente, con sintomi come diarrea e dolore addominale. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare i sintomi, garantire una dieta appropriata e segnalare riacutizzazioni."
+            },
+            {
+                question: "Cos’è la colite ulcerosa?",
+                options: ["Un’infiammazione del pancreas", "Un’infiammazione cronica del colon", "Un accumulo di urina"],
+                correct: "Un’infiammazione cronica del colon",
+                explanation: "La colite ulcerosa è una malattia infiammatoria cronica che colpisce il colon e il retto, con sintomi come diarrea sanguinolenta e dolore addominale. Non è un’infiammazione del pancreas né un accumulo di urina. Gli OSS devono monitorare la diarrea, fornire assistenza igienica e segnalare complicanze."
+            },
+            {
+                question: "Cos’è la diverticolite?",
+                options: ["Un’infiammazione dei diverticoli intestinali", "Un’infiammazione del fegato", "Un blocco renale"],
+                correct: "Un’infiammazione dei diverticoli intestinali",
+                explanation: "La diverticolite è un’infiammazione dei diverticoli (piccole sacche nel colon), spesso causata da infezioni, con sintomi come dolore addominale e febbre. Non è un’infiammazione del fegato né un blocco renale. Gli OSS devono monitorare il dolore, garantire una dieta appropriata e segnalare segni di infezione."
+            },
+            {
+                question: "Quale è un segno tipico della diverticolite?",
+                options: ["Ittero", "Dolore addominale sinistro", "Poliuria"],
+                correct: "Dolore addominale sinistro",
+                explanation: "Il dolore addominale sinistro, spesso associato a febbre e stipsi, è un segno tipico della diverticolite, poiché i diverticoli si trovano comunemente nel colon sigmoideo. L’ittero e la poliuria non sono correlati. Gli OSS devono monitorare il dolore e segnalare sintomi sospetti."
+            },
+            {
+                question: "Cos’è la peritonite?",
+                options: ["Un’infiammazione della vescica", "Un’infiammazione del peritoneo", "Un accumulo di liquido nei polmoni"],
+                correct: "Un’infiammazione del peritoneo",
+                explanation: "La peritonite è un’infiammazione del peritoneo, spesso causata da perforazioni (es. ulcera gastrica) o infezioni, con sintomi come dolore addominale severo e febbre. Non è un’infiammazione della vescica né un edema polmonare. Gli OSS devono segnalare immediatamente sintomi come dolore acuto e febbre."
+            },
+            {
+                question: "Cos’è l’ernia addominale?",
+                options: ["Un accumulo di liquido nei tessuti", "Una protrusione di un organo attraverso la parete addominale", "Un’infiammazione del fegato"],
+                correct: "Una protrusione di un organo attraverso la parete addominale",
+                explanation: "L’ernia addominale è una protrusione di un organo (es. intestino) attraverso un punto debole della parete addominale, con sintomi come gonfiore e dolore. Non è un accumulo di liquido né un’infiammazione del fegato. Gli OSS devono monitorare il gonfiore, evitare sforzi fisici e segnalare complicanze come lo strozzamento."
+            },
+            {
+                question: "Cos’è l’ernia iatale?",
+                options: ["Una protrusione dello stomaco attraverso il diaframma", "Una protrusione dell’intestino attraverso l’inguine", "Un’infiammazione del colon"],
+                correct: "Una protrusione dello stomaco attraverso il diaframma",
+                explanation: "L’ernia iatale è una protrusione di una parte dello stomaco attraverso il foro esofageo del diaframma, spesso associata a reflusso gastroesofageo. Non è una protrusione inguinale né un’infiammazione del colon. Gli OSS devono monitorare sintomi come bruciore di stomaco e garantire una dieta appropriata."
+            },
+            {
+                question: "Cos’è il reflusso gastroesofageo?",
+                options: ["Un’infiammazione del pancreas", "Il ritorno di contenuto gastrico nell’esofago", "Un blocco renale"],
+                correct: "Il ritorno di contenuto gastrico nell’esofago",
+                explanation: "Il reflusso gastroesofageo è il ritorno di contenuto acido dello stomaco nell’esofago, causando sintomi come bruciore di stomaco e rigurgito. Non è un’infiammazione del pancreas né un blocco renale. Gli OSS devono aiutare il paziente a mantenere una posizione semi-seduta, evitare pasti pesanti e segnalare sintomi persistenti."
+            },
+            {
+                question: "Quale è un segno tipico del reflusso gastroesofageo?",
+                options: ["Poliuria", "Bruciore di stomaco", "Cianosi"],
+                correct: "Bruciore di stomaco",
+                explanation: "Il bruciore di stomaco (pirosi) è un segno tipico del reflusso gastroesofageo, dovuto all’irritazione dell’esofago da acido gastrico. La poliuria e la cianosi non sono correlate. Gli OSS devono monitorare i sintomi, garantire una dieta appropriata e segnalare complicanze come difficoltà di deglutizione."
+            },
+            {
+                question: "Cos’è la stitichezza cronica?",
+                options: ["Un aumento della frequenza delle feci", "Una difficoltà persistente nell’evacuazione", "Un accumulo di liquido nei polmoni"],
+                correct: "Una difficoltà persistente nell’evacuazione",
+                explanation: "La stitichezza cronica è una difficoltà persistente o rarefazione nell’evacuazione delle feci, spesso causata da dieta povera di fibre o sedentarietà. Non è un aumento della frequenza delle feci né un edema polmonare. Gli OSS devono promuovere una dieta ricca di fibre, incoraggiare la mobilità e segnalare la stitichezza persistente."
+            },
+            {
+                question: "Cos’è la fistola anale?",
+                options: ["Un’infiammazione del fegato", "Un passaggio anormale tra ano e cute", "Un accumulo di urina"],
+                correct: "Un passaggio anormale tra ano e cute",
+                explanation: "La fistola anale è un passaggio anormale tra il canale anale e la cute perianale, spesso causata da ascessi, con sintomi come secrezioni e dolore. Non è un’infiammazione del fegato né un accumulo di urina. Gli OSS devono garantire l’igiene della zona, monitorare le secrezioni e segnalare infezioni."
+            },
+            {
+                question: "Cos’è un ascesso perianale?",
+                options: ["Un accumulo di liquido nei polmoni", "Una raccolta di pus vicino all’ano", "Un’infiammazione del pancreas"],
+                correct: "Una raccolta di pus vicino all’ano",
+                explanation: "Un ascesso perianale è una raccolta di pus vicino all’ano o al retto, spesso causata da infezioni, con sintomi come dolore e gonfiore. Non è un accumulo di liquido nei polmoni né un’infiammazione del pancreas. Gli OSS devono monitorare il dolore, garantire l’igiene e segnalare segni di infezione."
+            },
+            {
+                question: "Quale è una complicanza dell’ascesso perianale?",
+                options: ["Iperglicemia", "Formazione di fistola", "Ipotermia"],
+                correct: "Formazione di fistola",
+                explanation: "La formazione di una fistola anale è una complicanza comune dell’ascesso perianale, dovuta alla cronicizzazione dell’infezione. L’iperglicemia e l’ipotermia non sono correlate. Gli OSS devono monitorare la zona perianale, garantire l’igiene e segnalare secrezioni o dolore persistente."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
